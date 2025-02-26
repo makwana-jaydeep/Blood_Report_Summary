@@ -1,5 +1,4 @@
 from translate import translate_text
-import asyncio
 from analysis import analysis
 from text_extraction import text_extraction
 import streamlit as st
@@ -20,7 +19,7 @@ def display_result(text):
             response = analysis(text)  
             clear_res = response
             st.write(clear_res) 
-            st.write(asyncio.run(translate_text(clear_res))) 
+            st.write(translate_text(clear_res)) 
         else:
             st.warning("Please upload a valid PDF file.") 
     except Exception as e:
