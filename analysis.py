@@ -3,6 +3,7 @@ import re
 import streamlit as st
 
 API_KEY = st.secrets["API_KEY"]
+
 def analysis(report):
     
     TOGETHER_API_KEY = API_KEY
