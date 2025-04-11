@@ -1,41 +1,41 @@
 import requests
-import re
 import streamlit as st
 
 API_KEY = st.secrets["API_KEY"]
 
 def analysis(report):
-    
-    TOGETHER_API_KEY = API_KEY
-    API_URL = "https://api.together.xyz/v1/completions"
+    API_URL = "https://api.together.xyz/v1/chat/completions"
 
     headers = {
-        "Authorization": f"Bearer {TOGETHER_API_KEY}",
+        "Authorization": f"Bearer {API_KEY}",
         "Content-Type": "application/json"
     }
 
-
-
     prompt = f"""
     I have a blood test report with the following values: {report}. 
-    give me this format analysis of this report ,
-    Concerns : for report ( 3 lines max),
-    Suggestions : according to you diet and all ( 3 lines max)
-    Emergency: doctor visit needed or not (just yes needed or not needed)
-    """   
+    Give me this format analysis of this report:
+    - Concerns: (max 3 lines)
+    - Suggestions: (max 3 lines about diet/lifestyle)
+    - Emergency: just write "Needed" or "Not Needed"
+    """
+
     data = {
         "model": "deepseek-ai/DeepSeek-R1",
-        "prompt": prompt,
-        "max_tokens": 1000
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        "max_tokens": 500,
+        "temperature": 0.7
     }
 
-    response = requests.post(API_URL, json=data, headers=headers)
-    if response.status_code == 200:
-        raw_text = response.json()["choices"][0]["text"]  
-        clean_text = re.sub(r".*?</think>\s*", "", raw_text, flags=re.DOTALL)  
-        return clean_text.strip()
-    else:
-        return "Error: API request failed."
+    response = requests.post(API_URL, headers=headers, json=data)
 
+    if response.status_code == 200:
+        return response.json()["choices"][0]["message"]["content"].strip()
+    else:
+        return f"Error: API request failed with status {response.status_code} - {response.text}"
+
+# Example usage (can be used in Streamlit app):
 if __name__ == "__main__":
-    analysis("how are you")
+    result = analysis("Hemoglobin: 9.2 g/dL, WBC: 13,000 /µL, Platelets: 100,000 /µL")
+    print(result)
