@@ -1,4 +1,5 @@
 import requests
+import re
 import streamlit as st
 
 API_KEY = st.secrets["API_KEY"]
@@ -31,11 +32,12 @@ def analysis(report):
     response = requests.post(API_URL, headers=headers, json=data)
 
     if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"].strip()
+        content = response.json()["choices"][0]["message"]["content"]
+        clean_text = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
+        return clean_text
     else:
         return f"Error: API request failed with status {response.status_code} - {response.text}"
 
-# Example usage (can be used in Streamlit app):
 if __name__ == "__main__":
     result = analysis("Hemoglobin: 9.2 g/dL, WBC: 13,000 /µL, Platelets: 100,000 /µL")
     print(result)
