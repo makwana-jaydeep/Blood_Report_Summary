@@ -2,7 +2,7 @@ import requests
 import re
 import streamlit as st
 
-API_KEY = "tgp_v1_1i1l3At74wm-MMdUo2enqC8JyxC_U_45uzRHznVOQZU" 
+API_KEY = "tgp_v1_uGTRxW9oHHVAWOgUcKenjV2rSf-zAdGzQGgViq4GQ7Q" 
 
 def analysis(report):
     API_URL = "https://api.together.xyz/v1/chat/completions"
